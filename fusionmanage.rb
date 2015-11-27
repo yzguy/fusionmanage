@@ -38,13 +38,29 @@ class FusionManage
     def add(protocol, ipaddr, port)
       @inifile["incoming#{protocol}"][port] = "#{ipaddr}:#{port}"
       close
-      puts "localhost:#{port} => #{ipaddr}:#{port} added"
+      puts "ADDED: #{port} => #{ipaddr}:#{port}"
+      puts "Restart VMware Fusion Networking to take effect"
     end
 
     def delete(protocol, port)
       @inifile["incoming#{protocol}"].delete(port)
       close
-      puts "localhost:#{port} => #{port} added"
+      puts "DELETED: #{port} => #{port}"
+      puts "Restart VMware Fusion Networking to take effect"
+    end
+
+    def show 
+      puts "TCP Port Forwards"
+      puts "================="
+      @inifile['incomingtcp'].each do |key, val|
+        puts "#{key} => #{val}"
+      end
+      puts ""
+      puts "UDP Port Forwards"
+      puts "================="
+      @inifile['incomingudp'].each do |key, val|
+        puts "#{key} => #{val}"
+      end
     end
   end
 
@@ -57,6 +73,11 @@ class FusionManage
         nat.delete(protocol, port)
     end
   end
+
+  def self.show_forwards
+    nat = FusionForward.new(@@natpath)
+    nat.show
+  end
 end
 
 option = ARGV[0]
@@ -64,7 +85,28 @@ arg1 = ARGV[1]
 arg2 = ARGV[2]
 
 def usage
-  puts "Usage: fusionmanage <action> <ip address|port> <port>"
+  puts %{Usage: fusionmanage <action> <ip address|port> <port>"
+
+Actions:
+start-network         - Start VMware Fusion Networking
+stop-network          - Stop VMware Fusion Networking
+restart-network       - Restart VMware Fusion Networking
+show-forwards         - Show All Current Port Forwards
+
+Port Forwarding:
+add-tcp-forward
+add-udp-forward
+  IP Address         - IP Address of VM to forward traffic to 
+  Port               - Port to forward traffic to
+
+Example: fusionmanage add-tcp-forward 192.168.0.10 8080
+
+delete-tcp-forward
+delete-udp-forward
+  Port               - Port to delete forwarding on 
+
+Example: fusionmanage delete-tcp-forward 8080
+}
 end
 
 case option
@@ -82,6 +124,8 @@ when "add-udp-forward"
   FusionManage.port_forward("add", "udp", arg1, arg2)
 when "delete-udp-forward"
   FusionManage.port_forward("delete", "udp", arg1)
+when "show-forwards"
+  FusionManage.show_forwards
 else
   usage()
   abort()
