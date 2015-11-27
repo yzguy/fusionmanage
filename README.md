@@ -7,6 +7,8 @@ Features:
 * Stop, Start, Restart Networking
 * TCP/UDP Port Forwarding
 
+[![Code Climate](https://codeclimate.com/github/yzguy/fusionmanage/badges/gpa.svg)](https://codeclimate.com/github/yzguy/fusionmanage)
+
 ### Getting Started
 TODO
 
