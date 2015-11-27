@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    colorize (0.7.7)
+    inifile (3.0.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  colorize
+  inifile
+
+BUNDLED WITH
+   1.10.6

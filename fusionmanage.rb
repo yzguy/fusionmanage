@@ -1,6 +1,10 @@
 #!/usr/bin/ruby
 
+require 'rubygems'
+require 'bundler/setup'
+
 require 'inifile'
+require 'colorize'
 
 class FusionManage
   @@fusionbase = '/Applications/VMware\ Fusion.app/Contents/Library/vmnet-cli'
