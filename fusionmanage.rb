@@ -34,11 +34,13 @@ class FusionManage
     def add(protocol, ipaddr, port)
       @inifile["incoming#{protocol}"][port] = "#{ipaddr}:#{port}"
       close
+      puts "localhost:#{port} => #{ipaddr}:#{port} added"
     end
 
     def delete(protocol, port)
       @inifile["incoming#{protocol}"].delete(port)
       close
+      puts "localhost:#{port} => #{port} added"
     end
   end
 
