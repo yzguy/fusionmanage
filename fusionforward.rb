@@ -9,10 +9,12 @@ class FusionForward
 
   def add(protocol, ipaddr, port)
     @inifile["incoming#{protocol}"][port] = "#{ipaddr}:#{port}"
+    close()
   end
 
   def delete(protocol, port)
     @inifile["incoming#{protocol}"].delete(port)
+    close()
   end
 
   def close 
