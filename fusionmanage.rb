@@ -6,7 +6,8 @@ class FusionManage
   @@fusionbase = 'sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cli'
   @@stop = @@fusionbase + ' --stop'
   @@start = @@fusionbase + ' --start'
-  @@natpath = '/Library/Preferences/VMware\ Fusion/vmnet8/nat.conf'
+#  @@natpath = '/Library/Preferences/VMware\ Fusion/vmnet8/nat.conf'
+  @@natpath = 'nat.conf'
 
   def self.start_network 
     system @@start
