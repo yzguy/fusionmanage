@@ -39,6 +39,7 @@ class FusionManage
       @inifile["incoming#{protocol}"][port] = "#{ipaddr}:#{port}"
       close
       puts "ADDED: #{port} => #{ipaddr}:#{port}"
+      puts ""
       puts "Restart VMware Fusion Networking to take effect"
     end
 
@@ -46,6 +47,7 @@ class FusionManage
       @inifile["incoming#{protocol}"].delete(port)
       close
       puts "DELETED: #{port} => #{port}"
+      puts ""
       puts "Restart VMware Fusion Networking to take effect"
     end
 
