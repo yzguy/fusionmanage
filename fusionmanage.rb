@@ -110,23 +110,23 @@ Example: fusionmanage delete-tcp-forward 8080
 end
 
 case option
-when "start-network"
-  FusionManage.start_network
-when "stop-network"
-  FusionManage.stop_network
-when "restart-network"
-  FusionManage.restart_network
-when "add-tcp-forward"
-  FusionManage.port_forward("add", "tcp", arg1, arg2)
-when "delete-tcp-forward"
-  FusionManage.port_forward("delete", "tcp", arg1)
-when "add-udp-forward"
-  FusionManage.port_forward("add", "udp", arg1, arg2)
-when "delete-udp-forward"
-  FusionManage.port_forward("delete", "udp", arg1)
-when "show-forwards"
-  FusionManage.show_forwards
-else
-  usage()
-  abort()
+  when "start-network"
+    FusionManage.start_network
+  when "stop-network"
+    FusionManage.stop_network
+  when "restart-network"
+    FusionManage.restart_network
+  when "add-tcp-forward"
+    FusionManage.port_forward("add", "tcp", arg1, arg2)
+  when "delete-tcp-forward"
+    FusionManage.port_forward("delete", "tcp", arg1)
+  when "add-udp-forward"
+    FusionManage.port_forward("add", "udp", arg1, arg2)
+  when "delete-udp-forward"
+    FusionManage.port_forward("delete", "udp", arg1)
+  when "show-forwards"
+    FusionManage.show_forwards
+  else
+    usage()
+    abort()
 end
