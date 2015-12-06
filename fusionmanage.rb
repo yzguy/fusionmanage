@@ -69,7 +69,7 @@ class FusionManage
   def self.port_forward(action, protocol, ipaddr = "", port)
     case action
       when "add"
-        FusionFoward.new(@@nat_path).add(protocol, ipaddr, port)
+        FusionForward.new(@@nat_path).add(protocol, ipaddr, port)
       when "delete"
         FusionForward.new(@@nat_path).delete(protocol, port)
     end
