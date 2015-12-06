@@ -4,13 +4,12 @@ require 'rubygems'
 require 'bundler/setup'
 
 require 'inifile'
-require 'colorize'
 
 class FusionManage
   @@fusionbase = '/Applications/VMware\ Fusion.app/Contents/Library/vmnet-cli'
   @@stop = @@fusionbase + ' --stop'
   @@start = @@fusionbase + ' --start'
-  @@natpath = "/Library/Preferences/VMware\ Fusion/vmnet8/nat.conf"
+  @@nat_path = "/Library/Preferences/VMware\ Fusion/vmnet8/nat.conf"
 
   def self.start_network
     system @@start
@@ -27,58 +26,57 @@ class FusionManage
   end
 
   class FusionForward
+    attr_reader :inifile
     def initialize(ini_path)
-      @inifile = IniFile.load(ini_path)
+      @inifile = load(ini_path)
     end
 
-    def close
-      @inifile.write
+    def load(ini_path)
+      IniFile.load(ini_path) or abort("Error: inifile not found")
+    end
+
+    def save
+      inifile.write
     end
 
     def add(protocol, ipaddr, port)
-      @inifile["incoming#{protocol}"][port] = "#{ipaddr}:#{port}"
-      close
-      puts "ADDED: #{port} => #{ipaddr}:#{port}"
-      puts ""
-      puts "Restart VMware Fusion Networking to take effect"
+      inifile["incoming#{protocol}"][port] = "#{ipaddr}:#{port}"
+    ensure
+      save
     end
 
     def delete(protocol, port)
-      @inifile["incoming#{protocol}"].delete(port)
-      close
-      puts "DELETED: #{port} => #{port}"
-      puts ""
-      puts "Restart VMware Fusion Networking to take effect"
+      inifile["incoming#{protocol}"].delete(port)
+    ensure
+      save
     end
 
-    def show 
-      puts "TCP Port Forwards"
-      puts "================="
-      @inifile['incomingtcp'].each do |key, val|
+    def forwards_by_protocol(protocol)
+      puts "#{protocol.upcase} Forwards"
+      inifile["incoming#{protocol}"].each do |key, val|
         puts "#{key} => #{val}"
       end
-      puts ""
-      puts "UDP Port Forwards"
-      puts "================="
-      @inifile['incomingudp'].each do |key, val|
-        puts "#{key} => #{val}"
+      puts
+    end
+
+    def show_forwards
+      ['tcp', 'udp'].each do |protocol|
+        forwards_by_protocol(protocol)
       end
     end
   end
 
   def self.port_forward(action, protocol, ipaddr = "", port)
-    nat = FusionForward.new(@@natpath)
     case action
       when "add"
-        nat.add(protocol, ipaddr, port)
+        FusionFoward.new(@@nat_path).add(protocol, ipaddr, port)
       when "delete"
-        nat.delete(protocol, port)
+        FusionForward.new(@@nat_path).delete(protocol, port)
     end
   end
 
   def self.show_forwards
-    nat = FusionForward.new(@@natpath)
-    nat.show
+    FusionForward.new(@@nat_path).show_forwards
   end
 end
 
@@ -98,14 +96,14 @@ show-forwards         - Show All Current Port Forwards
 Port Forwarding:
 add-tcp-forward
 add-udp-forward
-  IP Address         - IP Address of VM to forward traffic to 
+  IP Address         - IP Address of VM to forward traffic to
   Port               - Port to forward traffic to
 
 Example: fusionmanage add-tcp-forward 192.168.0.10 8080
 
 delete-tcp-forward
 delete-udp-forward
-  Port               - Port to delete forwarding on 
+  Port               - Port to delete forwarding on
 
 Example: fusionmanage delete-tcp-forward 8080
 }
