@@ -5,9 +5,9 @@ require 'inifile'
 # FusionManage
 class FusionManage
   @fusionbase = '/Applications/VMware\ Fusion.app/Contents/Library/vmnet-cli'
-  @stop = @@fusionbase + ' --stop'
-  @start = @@fusionbase + ' --start'
-  @nat_path = '/Library/Preferences/VMware\ Fusion/vmnet8/nat.conf'
+  @stop = @fusionbase + ' --stop'
+  @start = @fusionbase + ' --start'
+  @nat_path = "/Library/Preferences/VMware\ Fusion/vmnet8/nat.conf"
 
   def self.start_network
     system @start
@@ -57,7 +57,7 @@ class FusionManage
     end
 
     def show_forwards
-      %w('tcp', 'udp').each do |protocol|
+      ['tcp', 'udp'].each do |protocol|
         forwards_by_protocol(protocol)
       end
     end
