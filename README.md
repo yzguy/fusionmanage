@@ -58,7 +58,7 @@ where [options] are:
 Forward traffic on host TCP/8080 to VM 192.168.0.10:8080
 
 ```
-sudo fusionmanage --action forward -A --protocol tcp --ip 192.168.0.10 --port 8080
+user@host:~# sudo fusionmanage --action forward -A --protocol tcp --ip 192.168.0.10 --port 8080
 ```
 
 
