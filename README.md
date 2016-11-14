@@ -38,11 +38,12 @@ where [options] are:
   stop      Stop VMware Fusion Networking
   restart   Restart VMware Fusion Networking
   show      Show All Current Port Forwards
+  forward   Add/Delete a Port Forward Mapping
 
   If action is 'forward' you must specify one of the following:
     -A    Add Port Forward
     -D    Delete Port Forward
-    
+
   [protocol] must be one of the following:
     tcp   TCP Protocol
     udp   UDP Protocol
