@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+require 'fusionmanage'
+
+option = ARGV[0]
+arg1 = ARGV[1]
+arg2 = ARGV[2]
+
+def usage
+  puts %(Usage: fusionmanage <action> <ip address|port> <port>
+
+Actions:
+start-network         - Start VMware Fusion Networking
+stop-network          - Stop VMware Fusion Networking
+restart-network       - Restart VMware Fusion Networking
+show-forwards         - Show All Current Port Forwards
+
+Port Forwarding:
+add-tcp-forward
+add-udp-forward
+  IP Address         - IP Address of VM to forward traffic to
+  Port               - Port to forward traffic to
+
+Example: fusionmanage add-tcp-forward 192.168.0.10 8080
+
+delete-tcp-forward
+delete-udp-forward
+  Port               - Port to delete forwarding on
+
+Example: fusionmanage delete-tcp-forward 8080
+  )
+end
+
+case option
+when 'start-network'
+  FusionManage.start_network
+when 'stop-network'
+  FusionManage.stop_network
+when 'restart-network'
+  FusionManage.restart_network
+when 'add-tcp-forward'
+  FusionManage.port_forward('add', 'tcp', arg1, arg2)
+when 'delete-tcp-forward'
+  FusionManage.port_forward('delete', 'tcp', arg1)
+when 'add-udp-forward'
+  FusionManage.port_forward('add', 'udp', arg1, arg2)
+when 'delete-udp-forward'
+  FusionManage.port_forward('delete', 'udp', arg1)
+when 'show-forwards'
+  FusionManage.show_forwards
+else
+  usage
+  abort
+end
