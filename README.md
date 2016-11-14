@@ -10,97 +10,64 @@ Features:
 [![Code Climate](https://codeclimate.com/github/yzguy/fusionmanage/badges/gpa.svg)](https://codeclimate.com/github/yzguy/fusionmanage)
 
 ### Getting Started
-TODO
+
+Install Gem
+
+`gem install fusionmanage`
 
 ### Commands
-\* **Must be run with sudo** \*
 
-#### Start Networking
-```
-user@host:~# sudo fusionmanage start-network
-Enabled hostonly virtual adapter on vmnet1
-Started DHCP service on vmnet1
-Started NAT service on vmnet8
-Enabled hostonly virtual adapter on vmnet8
-Started DHCP service on vmnet8
-Started all configured services on all networks
-```
+**Note:** Must be run with sudo
 
-#### Stop Networking
 ```
-user@host:~# sudo fusionmanage stop-network
-Stopped DHCP service on vmnet1
-Disabled hostonly virtual adapter on vmnet1
-Stopped DHCP service on vmnet8
-Stopped NAT service on vmnet8
-Disabled hostonly virtual adapter on vmnet8
-Stopped all configured services on all networks
-```
+Command-line utility to manage VMware Fusion Networking and Port Forwarding
 
-#### Restart Networking
-```
-user@host:~# sudo fusionmanage restart-network
-Stopped DHCP service on vmnet1
-Disabled hostonly virtual adapter on vmnet1
-Stopped DHCP service on vmnet8
-Stopped NAT service on vmnet8
-Disabled hostonly virtual adapter on vmnet8
-Stopped all configured services on all networks
-Enabled hostonly virtual adapter on vmnet1
-Started DHCP service on vmnet1
-Started NAT service on vmnet8
-Enabled hostonly virtual adapter on vmnet8
-Started DHCP service on vmnet8
-Started all configured services on all networks
+Usage:
+  fusionmanage [-a|--action] [-A|-D] [-p|--protocol] [-i|--ip] [-o|--port]
+
+where [options] are:
+-a, --action=<s>      Action to run
+-A, --add             Add port forward
+-D, --delete          Delete port forward
+-p, --protocol=<s>    Protocol to forward
+-i, --ip=<s>          IPv4 Address to forward to
+-o, --port=<i>        Port to forward
+
+[action] must be one of the following:
+  start     Start VMware Fusion Networking
+  stop      Stop VMware Fusion Networking
+  restart   Restart VMware Fusion Networking
+  show      Show All Current Port Forwards
+
+  **If action is 'forward' you must specify one of the following:
+    -A    Add Port Forward
+    -D    Delete Port Forward
+
+** Forward Only **
+[protocol] must be one of the following:
+  tcp   TCP Protocol
+  udp   UDP Protocol
+
+[ip] must be a valid IPv4 address (eg. 192.168.0.10)
+[port] must be a valid port number (1 - 65535)
+-h, --help            Show this message
 ```
 
-### Port Forwarding
+#### Examples
 
-One of the best features is the ability to manage port forwarding from your host to one of your running VMs
+Forward traffic on host TCP/8080 to VM 192.168.0.10:8080
 
-#### Show Forwards
 ```
-user@host:~# sudo fusionmanage show-forwards
-TCP Port Forwards
-=================
+sudo fusionmanage --action forward -A --protocol tcp --ip 192.168.0.10 --port 8080
+```
+
+
+Show current port forwards
+
+```
+user@host:~# sudo fusionmanage --action show
+TCP Forwards
 8080 => 192.168.0.10:8080
 
-UDP Port Forwards
-=================
-```
-
-#### Add TCP/UDP Forward
-
-TCP:
-```
-user@host:~# sudo fusionmanage add-tcp-forward 192.168.0.10 8080
-ADDED: 8080 => 192.168.0.10:8080
-
-Restart VMware Fusion Networking to take effect
-```
-
-UDP:
-```
-user@host:~# sudo fusionmanage add-udp-forward 192.168.0.10 53
-ADDED: 53 => 192.168.0.10:53
-
-Restart VMware Fusion Networking to take effect
-```
-
-#### Delete TCP/UDP Forward
-
-TCP:
-```
-user@host:~# sudo fusionmanage delete-tcp-forward 8080
-DELETED: 8080 => 8080
-
-Restart VMware Fusion Networking to take effect
-```
-
-UDP:
-```
-user@host:~# sudo fusionmanage delete-udp-forward 53
-DELETED: 53 => 53
-
-Restart VMware Fusion Networking to take effect
+UDP Forwards
 ```
