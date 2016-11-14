@@ -39,17 +39,17 @@ where [options] are:
   restart   Restart VMware Fusion Networking
   show      Show All Current Port Forwards
 
-  **If action is 'forward' you must specify one of the following:
+  If action is 'forward' you must specify one of the following:
     -A    Add Port Forward
     -D    Delete Port Forward
+    
+  [protocol] must be one of the following:
+    tcp   TCP Protocol
+    udp   UDP Protocol
 
-** Forward Only **
-[protocol] must be one of the following:
-  tcp   TCP Protocol
-  udp   UDP Protocol
+  [ip] must be a valid IPv4 address (eg. 192.168.0.10)
+  [port] must be a valid port number (1 - 65535)
 
-[ip] must be a valid IPv4 address (eg. 192.168.0.10)
-[port] must be a valid port number (1 - 65535)
 -h, --help            Show this message
 ```
 
