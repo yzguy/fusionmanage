@@ -1,54 +1,103 @@
 #!/usr/bin/env ruby
 
+require 'trollop'
+require 'resolv'
+
 require 'fusionmanage'
 
-option = ARGV[0]
-arg1 = ARGV[1]
-arg2 = ARGV[2]
+opts = Trollop.options do
+  banner <<-EOS
+  Command-line utility to manage VMware Fusion Networking and Port Forwarding
 
-def usage
-  puts %(Usage: fusionmanage <action> <ip address|port> <port>
+  Usage:
+        fusionmanage [-a|--action] [-A|-D] [-p|--protocol] [-i|--ip] [-o|--port]
 
-Actions:
-start-network         - Start VMware Fusion Networking
-stop-network          - Stop VMware Fusion Networking
-restart-network       - Restart VMware Fusion Networking
-show-forwards         - Show All Current Port Forwards
+  where [options] are:
+  EOS
 
-Port Forwarding:
-add-tcp-forward
-add-udp-forward
-  IP Address         - IP Address of VM to forward traffic to
-  Port               - Port to forward traffic to
+  opt :action,   'Action to run',              type: :string, required: true
+  opt :add,      'Add port forward',           type: :flag,   short: '-A'
+  opt :delete,   'Delete port forward',        type: :flag,   short: '-D'
+  opt :protocol, 'Protocol to forward',        type: :string
+  opt :ip,       'IPv4 Address to forward to', type: :string
+  opt :port,     'Port to forward',            type: :int
 
-Example: fusionmanage add-tcp-forward 192.168.0.10 8080
+  banner <<-EOS
 
-delete-tcp-forward
-delete-udp-forward
-  Port               - Port to delete forwarding on
+  [action] must be one of the following:
+    start     Start VMware Fusion Networking
+    stop      Stop VMware Fusion Networking
+    restart   Restart VMware Fusion Networking
+    show      Show All Current Port Forwards
 
-Example: fusionmanage delete-tcp-forward 8080
-  )
+    **If action is 'forward' you must specify one of the following:
+    -A    Add Port Forward
+    -D    Delete Port Forward
+
+  ** Forward Only **
+  [protocol] must be one of the following:
+    tcp   TCP Protocol
+    udp   UDP Protocol
+
+  [ip] must be a valid IPv4 address (eg. 192.168.0.10)
+  [port] must be a valid port number (1 - 65535)
+
+  EOS
 end
 
-case option
-when 'start-network'
-  FusionManage.start_network
-when 'stop-network'
-  FusionManage.stop_network
-when 'restart-network'
-  FusionManage.restart_network
-when 'add-tcp-forward'
-  FusionManage.port_forward('add', 'tcp', arg1, arg2)
-when 'delete-tcp-forward'
-  FusionManage.port_forward('delete', 'tcp', arg1)
-when 'add-udp-forward'
-  FusionManage.port_forward('add', 'udp', arg1, arg2)
-when 'delete-udp-forward'
-  FusionManage.port_forward('delete', 'udp', arg1)
-when 'show-forwards'
-  FusionManage.show_forwards
+# Validate Action
+VALID_ACTIONS = %w(start stop restart forward show).freeze
+if VALID_ACTIONS.include?(opts[:action])
+  action = opts[:action]
+
+  # Validate other args if forwarding
+  if action.eql?('forward')
+
+    # Validate Forward Action
+    if opts[:add]
+      forward_action = 'add'
+    elsif opts[:delete]
+      forward_action = 'delete'
+    else
+      Trollop.die "-A or -D must be specified if action is 'forward'"
+    end
+
+    # Validate Protocol
+    VALID_PROTOCOLS = %w(tcp udp).freeze
+    if VALID_PROTOCOLS.include?(opts[:protocol])
+      protocol = opts[:protocol]
+    else
+      Trollop.die :protocol, 'Must be a valid protocol (TCP/UDP)'
+    end
+
+    # Validate IP Address
+    if opts[:ip] =~ Resolv::IPv4::Regex
+      ip = opts[:ip]
+    else
+      Trollop.die :ip, 'Must be a valid IPv4 address (192.168.0.10)'
+    end
+
+    # Validate Port
+    if opts[:port].between?(1, 65_535)
+      port = opts[:port].to_s
+    else
+      Trollop.die :port, 'Must be a valid port (1 - 65535)'
+    end
+
+  end
 else
-  usage
-  abort
+  Trollop.die :action, "must be a valid action: #{VALID_ACTIONS.join(', ')}"
+end
+
+case action
+when 'start'
+  FusionManage.start_network
+when 'stop'
+  FusionManage.stop_network
+when 'restart'
+  FusionManage.restart_network
+when 'forward'
+  FusionManage.port_forward(forward_action, protocol, ip, port)
+when 'show'
+  FusionManage.show_forwards
 end
