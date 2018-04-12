@@ -46,7 +46,7 @@ opts = Trollop.options do
 end
 
 # Validate Action
-VALID_ACTIONS = %w(start stop restart forward show).freeze
+VALID_ACTIONS = %w(start stop restart configure forward show).freeze
 if VALID_ACTIONS.include?(opts[:action])
   action = opts[:action]
 
@@ -96,6 +96,8 @@ when 'stop'
   FusionManage.stop_network
 when 'restart'
   FusionManage.restart_network
+when 'configure'
+  FusionManage.configure_network
 when 'forward'
   FusionManage.port_forward(forward_action, protocol, ip, port)
 when 'show'

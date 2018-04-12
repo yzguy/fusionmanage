@@ -2,6 +2,7 @@ class FusionManage
   @fusionbase = '/Applications/VMware\ Fusion.app/Contents/Library/vmnet-cli'
   @stop = @fusionbase + ' --stop'
   @start = @fusionbase + ' --start'
+  @configure = @fusionbase + ' --configure'
   @nat_path = "/Library/Preferences/VMware\ Fusion/vmnet8/nat.conf"
 
   def self.start_network
@@ -14,6 +15,10 @@ class FusionManage
 
   def self.restart_network
     system @start if system @stop
+  end
+
+  def self.configure_network
+    system @configure
   end
 
   def self.port_forward(action, protocol, ipaddr = '', port)
